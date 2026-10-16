@@ -1,0 +1,23 @@
+{
+    email {$ACME_EMAIL}
+}
+
+{$NEXO_DOMAIN} {
+    encode zstd gzip
+    request_body {
+        max_size 80MB
+    }
+    header {
+        Strict-Transport-Security "max-age=31536000"
+        X-Frame-Options DENY
+        X-Content-Type-Options nosniff
+        Referrer-Policy same-origin
+        Permissions-Policy "microphone=(self), camera=(), geolocation=()"
+        -Server
+    }
+    reverse_proxy app:8080 {
+        transport http {
+            response_header_timeout 240s
+        }
+    }
+}

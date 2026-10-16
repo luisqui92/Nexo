@@ -1,0 +1,112 @@
+/* M87* photograph: EHT Collaboration, distributed by ESO (eso1907a).
+   The browser caches the original photograph after its first online load. */
+:root {
+  --black-hole-image: url("https://cdn.eso.org/images/screen/eso1907a.jpg");
+  --cosmic-black: #100e12;
+  --cosmic-orange: #f4b17b;
+}
+.brand-mark {
+  font-size: 0;
+  background-color: var(--cosmic-black);
+  background-image: var(--black-hole-image);
+  background-size: 270%;
+  background-position: 50% 50%;
+  border: 1px solid #d886563b;
+  box-shadow: 0 0 18px #d8865615;
+}
+.page-header {
+  position: relative;
+  isolation: isolate;
+  min-height: 194px;
+  padding: 30px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--cosmic-black);
+  color: #fff;
+  align-items: flex-end;
+}
+.page-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: var(--black-hole-image);
+  background-position: right center;
+  background-size: auto 280px;
+  background-repeat: no-repeat;
+}
+.page-header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, #100e12 0%, #100e12ef 35%, #100e1270 75%, #100e1260);
+}
+.page-header > div:first-child { max-width: 580px; }
+.page-header h1 { color: #fff; text-wrap: balance; }
+.page-header .eyebrow { color: var(--cosmic-orange); }
+.page-header .subhead { color: #e1d9d4; }
+.page-header .actions { justify-content: flex-end; }
+.page-header .btn { background: #19171ee8; border-color: #e9ddd14a; color: #fff; }
+.page-header .btn:hover { background: #393039; border-color: #f4b17b; }
+.page-header .btn.primary { background: #f4b17b; border-color: #f4b17b; color: #261a14; }
+.page-header .btn.primary:hover { background: #ffc897; }
+.sidebar-note {
+  background: var(--cosmic-black);
+  background-image: linear-gradient(90deg, #100e12e8, #100e12be), var(--black-hole-image);
+  background-size: cover;
+  background-position: center;
+  border-color: #3a2930;
+  color: #fff;
+}
+.sidebar-note .spark { color: var(--cosmic-orange); }
+.sidebar-note p { color: #d7c6bb; }
+.auth-wrap {
+  position: relative;
+  isolation: isolate;
+  background: var(--cosmic-black);
+  align-items: flex-start;
+  padding: 40px clamp(30px, 8vw, 140px);
+}
+.auth-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 35%;
+  z-index: -2;
+  background: var(--black-hole-image) center center / auto 90% no-repeat;
+}
+.auth-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(120deg, #100e1299, #100e12b0);
+}
+.auth-wrap > .brand { color: #fff; }
+.auth-wrap > .brand small { color: #ead3c3; }
+.auth-wrap .brand-dot { color: var(--cosmic-orange); }
+.auth-wrap .auth-card { background: #fffffff5; border-color: #ffffff73; box-shadow: 0 20px 75px #0008; }
+.auth-wrap .auth-note { color: #e2d3ca; width: 100%; max-width: 440px; }
+.image-credit { color: #73736c; font-size: 9px; text-decoration: underline; text-underline-offset: 3px; }
+.auth-wrap .image-credit { color: #d7c3b8; margin-top: 4px; text-align: center; width: 100%; max-width: 440px; }
+.app-footer { flex-wrap: wrap; gap: 10px 20px; }
+.app-footer .image-credit { margin-right: auto; }
+@media (max-width: 980px) {
+  .page-header { align-items: flex-start; flex-wrap: wrap; }
+  .page-header > div:first-child { max-width: 100%; }
+}
+@media (max-width: 720px) {
+  .page-header { min-height: 218px; padding: 24px 20px; gap: 18px; border-radius: 14px; }
+  .page-header::before { background-size: auto 260px; background-position: right -95px top -35px; }
+  .page-header::after { background: linear-gradient(90deg, #100e12ed, #100e12b3 62%, #100e1270); }
+  .page-header .actions { justify-content: flex-start; width: 100%; }
+  .page-header .subhead { max-width: 310px; font-size: 12px; }
+  .auth-wrap { align-items: center; padding: 42px 20px 35px; }
+  .auth-wrap > .brand { align-self: flex-start; margin-bottom: 125px; }
+  .auth-wrap::before { inset: 0; background-position: center top -25px; background-size: auto 340px; }
+  .app-footer .image-credit { flex-basis: 100%; }
+}
+@media print {
+  .brand-mark, .sidebar-note { background-image: none; }
+  .page-header::before, .page-header::after, .image-credit { display: none !important; }
+}

@@ -1,0 +1,10 @@
+{
+  "d1": {
+    "binding": "DB",
+    "migrations_dir": "migrations"
+  },
+  "r2": {
+    "binding": "BUCKET"
+  },
+  "project_id": "appgprj_6acd661077688191b648173c74487ff8"
+}

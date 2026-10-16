@@ -1,0 +1,23 @@
+NEXO — PAQUETE PARA PRESENTAR
+
+1. Conservá tu carpeta data y, si existe, data_presentacion.
+2. Reemplazá los archivos del programa y detené cualquier servidor anterior.
+3. Para la presentación, abrí presentar.py en Pydroid y ejecutalo.
+4. La consola muestra gerencia.demo, ana.demo y bruno.demo y sus contraseñas.
+   Cada contraseña se genera en tu dispositivo. También quedan en
+   data_presentacion/accesos-demo.json (solo datos ficticios).
+5. Abrí Chrome: http://127.0.0.1:8080
+6. Entrá como gerencia. Abrí Preparar presentación.
+7. Para probar el audio automático: Configuración, Conectar audio e IA,
+   OpenAI y tu propia clave. Se necesita internet y facturación de la API.
+8. Probá una grabación breve real antes de la reunión.
+9. Diapositivas: http://127.0.0.1:8080/presentacion.html
+10. El guion y la alternativa si falla internet están en GUIA-PRESENTACION.md.
+
+Para volver a tus registros habituales, detené presentar.py y ejecutá server.py.
+La presentación usa data_presentacion; el sistema habitual usa data.
+No ejecutes ambos al mismo tiempo en el puerto 8080.
+
+La imagen del agujero negro se carga desde ESO y necesita internet la primera vez.
+El PDF de la presentación permite mostrar la propuesta sin ejecutar el sistema.
+No se incluye una clave de OpenAI ni una plataforma publicada en internet.

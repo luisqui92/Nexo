@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+const nodes=new Map();
+function node(selector){if(!nodes.has(selector))nodes.set(selector,{innerHTML:'',textContent:'',value:'',classList:{add(){},remove(){},toggle(){}},querySelector:s=>node(selector+' '+s),querySelectorAll:()=>[],setAttribute(){},append(){},remove(){},focus(){},scrollIntoView(){}});return nodes.get(selector)}
+const document={querySelector:node,querySelectorAll:()=>[],getElementById:id=>node('#'+id),addEventListener(){},body:node('body'),createElement:()=>node('created'),hidden:false};
+const context={document,window:{addEventListener(){},scrollTo(){}},location:{hash:'#inicio',hostname:'localhost'},navigator:{},console,Intl,Date,setTimeout(){},setInterval(){},structuredClone,sessionStorage:{getItem(){},removeItem(){},setItem(){}}};
+vm.createContext(context);
+for(const file of ['app.js','transcription.js','team.js','preparation.js'])vm.runInContext(readFileSync(new URL('../public/'+file,import.meta.url),'utf8'),context);
+const run=code=>vm.runInContext(code,context);
+run(`config={role:'admin',user:'Administración',profile:{id:'admin'},teamSupported:true};teamUsers=[{id:'ana',name:'Ana',role:'advisor',active:1}];state={clients:[{id:'c',name:'Cliente',role:'Comprador',currency:'USD',advisorId:'ana',needs:[],zones:[]}],properties:[{id:'p',title:'Departamento',zone:'Centro',currency:'USD',operation:'Venta',status:'Disponible',advisorIds:['ana']}],visits:[],events:[],operations:[],files:[]};startPage()`);
+assert.match(node('#main').innerHTML,/Panel central/);assert.match(node('#main').innerHTML,/Actividad por asesor/);assert.match(node('#main').innerHTML,/Ana/);assert.match(node('#nav').innerHTML,/#equipo/);assert.match(node('#nav').innerHTML,/#asignaciones/);
+run('renderClient("c")');assert.match(node('#main').innerHTML,/assign-client/);
+run('renderProperty("p")');assert.match(node('#main').innerHTML,/edit-property/);assert.match(node('#main').innerHTML,/assign-property/);
+run('renderAssignments()');assert.match(node('#assignedClients').innerHTML,/Cliente/);assert.match(node('#assignedProperties').innerHTML,/Departamento/);
+run("config={role:'advisor',user:'Ana Asesora',profile:{id:'ana'}};location.hash='#inicio';startPage()");
+assert.match(node('#nav').innerHTML,/Mis clientes/);assert.doesNotMatch(node('#nav').innerHTML,/#equipo|#asignaciones|#configuracion|#reportes/);assert.match(node('#main').innerHTML,/Ana/);assert.doesNotMatch(node('#main').innerHTML,/new-property/);
+run('renderClient("c")');assert.doesNotMatch(node('#main').innerHTML,/assign-client/);
+run('renderProperty("p")');assert.doesNotMatch(node('#main').innerHTML,/edit-property|assign-property|data-action="upload"/);
+run("location.hash='#configuracion';startPage()");assert.equal(run('route'),'inicio');
+run('clearTeamSession();renderLogin(true)');assert.match(node('#authRoot').innerHTML,/Iniciar sesión/);assert.equal(run('state.clients.length'),0);assert.equal(run('config.profile'),undefined);
+run('renderLogin(false)');assert.match(node('#authRoot').innerHTML,/Creá tu panel central/);assert.match(node('#authRoot').innerHTML,/data-mode="setup"/);
+console.log('Team interface passed: central overview and assignments, advisor navigation, property permissions, login/setup and clearing data on logout.');

@@ -1,0 +1,63 @@
+name: nexo
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: "8080"
+      NEXO_DEPLOYMENT: "1"
+      NEXO_HTTPS: "1"
+      NEXO_DOMAIN: ${NEXO_DOMAIN:?Configurá NEXO_DOMAIN en deploy/.env}
+      NEXO_DATA_DIR: /app/data
+      TZ: America/La_Paz
+      NEXO_TIMEZONE: America/La_Paz
+      OPENAI_MODEL: gpt-4.1-mini
+      NEXO_TRANSCRIPTION_PROVIDER: openai
+      OPENAI_TRANSCRIBE_MODEL: gpt-4o-mini-transcribe
+    # No public backend port: only Caddy can reach the service through this network.
+    volumes:
+      - nexo_data:/app/data
+    networks: [nexo]
+    read_only: true
+    tmpfs: [/tmp:size=32m,mode=1777]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 1g
+    pids_limit: 128
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/healthz',timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      NEXO_DOMAIN: ${NEXO_DOMAIN:?Configurá NEXO_DOMAIN en deploy/.env}
+      ACME_EMAIL: ${ACME_EMAIL:?Configurá ACME_EMAIL en deploy/.env}
+    ports: ["80:80", "443:443", "443:443/udp"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [nexo]
+    depends_on:
+      app:
+        condition: service_healthy
+    security_opt: [no-new-privileges:true]
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+networks:
+  nexo:
+volumes:
+  nexo_data:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,12 @@
+{
+  "name": "Nexo Inmobiliaria",
+  "short_name": "Nexo",
+  "description": "Clientes, inmuebles y visitas conectados.",
+  "lang": "es",
+  "start_url": "/#inicio",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f7f4",
+  "theme_color": "#164d45",
+  "icons": [{"src":"/mark.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]
+}

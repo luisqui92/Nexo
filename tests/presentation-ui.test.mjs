@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+const html=readFileSync(new URL('../public/presentacion.html',import.meta.url),'utf8');
+const count=(html.match(/<section class="slide/g)||[]).length;assert.equal(count,8);
+const slides=Array.from({length:count},()=>({active:false,hidden:null,classList:{toggle(name,yes){this.owner.active=yes}},setAttribute(name,value){this.hidden=value}}));slides.forEach(s=>s.classList.owner=s);
+const nodes={prev:{},next:{},print:{},counter:{}};const events={};let printed=false;
+const document={querySelectorAll:()=>slides,getElementById:id=>nodes[id],addEventListener:(name,fn)=>events[name]=fn};
+const context={document,window:{scrollTo(){},print(){printed=true}}};vm.createContext(context);vm.runInContext(readFileSync(new URL('../public/presentation.js',import.meta.url),'utf8'),context);
+assert.equal(nodes.counter.textContent,'1 / 8');assert.equal(nodes.prev.disabled,true);
+nodes.next.onclick();assert.equal(nodes.counter.textContent,'2 / 8');assert.equal(slides.filter(s=>s.active).length,1);
+events.keydown({key:'ArrowRight',preventDefault(){}});assert.equal(nodes.counter.textContent,'3 / 8');
+for(let i=0;i<20;i++)nodes.next.onclick();assert.equal(nodes.counter.textContent,'8 / 8');assert.equal(nodes.next.disabled,true);
+nodes.print.onclick();assert.equal(printed,true);
+assert.match(html,/Bs90/);assert.match(html,/datos|fictici/i);
+assert.match(html,/requiere|requieren/);
+console.log('Presentation passed: eight slides, touch/keyboard navigation, bounds and PDF control.');
