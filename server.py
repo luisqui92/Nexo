@@ -307,6 +307,33 @@ class Handler(BaseHTTPRequestHandler):
                     return self.reply(200,{'ok':True})
                 if path.startswith('/api') and not self.current_user:
                     return self.reply(401,{'error':'Iniciá sesión para abrir tu panel.'})
+                if path=='/api/account' and method in ('GET','PATCH'):
+                    user = self.current_user if method=='GET' else accounts.update_profile(conn,self.current_user['id'],self.body(limit=4096))
+                    return self.reply(200,{'user':user})
+                if path=='/api/account/avatar' and method in ('GET','POST','DELETE'):
+                    uid=self.current_user['id']
+                    if method=='GET':
+                        avatar=conn.execute('SELECT mime,body FROM user_avatars WHERE user_id=?',(uid,)).fetchone()
+                        if not avatar: return self.reply(404,{'error':'Todavía no agregaste una foto'})
+                        return self.reply(200,avatar['body'],avatar['mime'])
+                    if method=='POST':
+                        accounts.save_avatar(conn,uid,self.body(raw=True,limit=256*1024),self.headers.get('Content-Type','').split(';')[0])
+                    else:
+                        conn.execute('DELETE FROM user_avatars WHERE user_id=?',(uid,))
+                        conn.execute("UPDATE users SET avatar_updated='' WHERE id=?",(uid,))
+                    return self.reply(200,{'user':accounts.public_user(conn.execute('SELECT * FROM users WHERE id=?',(uid,)).fetchone())})
+                if path=='/api/account/password' and method=='POST':
+                    body=self.body(limit=4096)
+                    if not isinstance(body,dict): raise ValueError('Datos inválidos')
+                    digest,salt=accounts.password_values(body.get('newPassword'))
+                    user,error,status=accounts.login(conn,{'username':self.current_user['username'],'password':body.get('currentPassword')},getattr(self,'client_address',('127.0.0.1',0))[0])
+                    if error: return self.reply(429 if status==429 else 400,{'error':error if status==429 else 'La contraseña actual no es correcta.'})
+                    conn.execute('UPDATE users SET password_hash=?,salt=? WHERE id=?',(digest,salt,user['id']))
+                    conn.execute('DELETE FROM sessions WHERE user_id=?',(user['id'],))
+                    token=accounts.session(conn,user['id'])
+                    self.response_headers.append(('Set-Cookie',accounts.cookie(token,os.environ.get('NEXO_HTTPS')=='1')))
+                    conn.execute('INSERT INTO audit(action,record_id,created) VALUES(?,?,?)',('password_changed',user['id'],now()))
+                    return self.reply(200,{'ok':True})
                 if path=='/api/users' and method=='GET':
                     accounts.require_admin(self.current_user)
                     return self.reply(200,{'users':[accounts.public_user(r) for r in conn.execute('SELECT * FROM users ORDER BY role,name')]})

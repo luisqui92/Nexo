@@ -1,0 +1,59 @@
+/* Account and access screens use comfortable type sizes on desktop and mobile. */
+.auth-card { max-width: 460px; padding: 36px; background: #fff; }
+.auth-card h1 { font-size: clamp(28px, 3vw, 34px); letter-spacing: -.7px; font-weight: 650; margin: 12px 0; }
+.auth-card .eyebrow { color: #52665b; font-size: 12px; letter-spacing: 1.5px; }
+.auth-card .subhead { color: #53605b; font-size: 15px; line-height: 1.6; margin-bottom: 26px; }
+.auth-card label { color: #33443c; font-size: 14px; font-weight: 550; }
+.auth-card input { min-height: 48px; font-size: 16px; background: #fff; border-color: #bccac2; }
+.auth-card .btn { min-height: 48px; font-size: 15px; }
+.auth-card .notice { color: #53605b; font-size: 13px; line-height: 1.6; }
+.auth-wrap .auth-note { max-width: 460px; font-size: 14px; line-height: 1.6; margin: 22px 0 8px; }
+.about-button { border: 0; background: none; color: #52605a; font: inherit; font-size: 12px; padding: 10px 0; cursor: pointer; }
+.about-button:hover { text-decoration: underline; text-underline-offset: 4px; }
+.auth-wrap .about-button { color: #d6cfc9; width: 100%; max-width: 460px; text-align: center; }
+.account-trigger { background: transparent; border: 0; padding: 4px; border-radius: 50%; cursor: pointer; }
+.account-trigger:focus-visible,.about-button:focus-visible { outline: 2px solid #d49158; outline-offset: 4px; }
+.account-avatar { color: #fff; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.account-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.account-avatar.large { width: 88px; height: 88px; border-radius: 50%; font-size: 26px; font-weight: 600; }
+.account-grid { display: grid; grid-template-columns: minmax(240px, .7fr) minmax(0, 1.3fr); gap: 24px; }
+.account-summary { text-align: center; padding: 36px 24px; }
+.account-summary h2 { font-size: 24px; margin: 18px 0 8px; overflow-wrap: anywhere; }
+.account-summary p { font-size: 15px; color: #53605b; margin-bottom: 14px; }
+.account-summary .actions { justify-content: center; margin-top: 24px; }
+.account-badge { display: inline-block; background: #e7eeea; color: #164d45; font-size: 13px; padding: 8px 14px; border-radius: 20px; }
+.account-details h2 { font-size: 20px; margin-bottom: 20px; }
+.account-details .info-grid { margin-bottom: 32px; }
+.account-details .info-item small { font-size: 13px; color: #53605b; }
+.account-details .info-item strong { font-size: 15px; overflow-wrap: anywhere; }
+.account-photo { display: flex; gap: 20px; align-items: center; margin-bottom: 10px; }
+.account-photo label.btn { display: inline-flex; cursor: pointer; margin: 0 0 10px; }
+.account-photo > div:last-child { flex: 1; min-width: 0; }
+.account-photo label.btn { max-width: 100%; white-space: normal; text-align: center; }
+.account-grid .btn,#accountForm .btn,#accountPasswordForm .btn,.account-security .btn { font-size: 14px; min-height: 44px; }
+.account-file { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
+.account-photo:has(.account-file:focus-visible) label { outline: 2px solid #164d45; outline-offset: 3px; }
+.account-text-button { display: block; border: 0; padding: 2px 0 10px; background: none; color: #8b3d29; font-size: 13px; cursor: pointer; }
+.account-text-button[hidden] { display: none; }
+.account-hint { font-size: 13px; color: #53605b; line-height: 1.6; margin: 0; }
+.account-intro { font-size: 15px; color: #53605b; line-height: 1.6; margin-bottom: 24px; }
+.account-username { font-size: 15px; margin: 0; padding: 13px 0; color: #53605b; overflow-wrap: anywhere; }
+#accountPhotoStatus { font-size: 13px; color: #164d45; min-height: 20px; margin-bottom: 20px; }
+#accountForm label,#accountPasswordForm label { font-size: 14px; color: #33443c; }
+#accountForm input,#accountPasswordForm input { font-size: 16px; min-height: 46px; }
+#accountForm input[type=color] { width: 100%; max-width: 100px; padding: 5px; cursor: pointer; }
+#accountPasswordForm .field { margin-bottom: 20px; }
+.account-security { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 15px; border-top: 1px solid #e0e6df; padding-top: 22px; margin-top: 24px; font-size: 14px; color: #53605b; }
+.about-nexo { text-align: center; padding: 8px 12px 22px; }
+.about-nexo .brand-mark { display: inline-flex; width: 64px; height: 64px; border-radius: 16px; }
+.about-nexo h3 { font-size: 24px; margin: 20px 0 12px; }
+.about-nexo p { font-size: 15px; line-height: 1.6; color: #53605b; }
+.about-nexo hr { border: 0; border-top: 1px solid #e0e6df; margin: 24px 0; }
+.about-nexo .link { display: inline-block; font-size: 14px; margin-top: 12px; }
+@media (max-width: 720px) {
+  .auth-card { padding: 28px 24px; }
+  .account-grid { grid-template-columns: 1fr; gap: 18px; }
+  .account-photo { gap: 14px; align-items: flex-start; }
+  .account-photo .large { width: 72px; height: 72px; }
+  .account-photo label.btn { font-size: 13px; padding: 12px; }
+}

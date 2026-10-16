@@ -32,9 +32,49 @@ def initialize(conn):
             attempt_key TEXT PRIMARY KEY, failures INTEGER NOT NULL, reset_at INTEGER NOT NULL
         );
     ''')
+    # Additive migration: existing accounts, passwords and sessions are preserved.
+    columns = {r[1] for r in conn.execute('PRAGMA table_info(users)')}
+    for column, default in (('email', ''), ('phone', ''), ('title', ''), ('avatar_color', '#164d45'), ('avatar_updated', '')):
+        if column not in columns:
+            conn.execute(f"ALTER TABLE users ADD COLUMN {column} TEXT NOT NULL DEFAULT '{default}'")
+    conn.execute('''CREATE TABLE IF NOT EXISTS user_avatars (
+        user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+        mime TEXT NOT NULL, body BLOB NOT NULL
+    )''')
 
 def public_user(row):
-    return {key: row[key] for key in ('id', 'username', 'name', 'role', 'active', 'created')}
+    user = {key: row[key] for key in ('id', 'username', 'name', 'role', 'active', 'created', 'email', 'phone', 'title')}
+    user.update(avatarColor=row['avatar_color'], avatarUpdated=row['avatar_updated'])
+    return user
+
+def update_profile(conn, user_id, data):
+    allowed = {'name', 'email', 'phone', 'title', 'avatarColor'}
+    if not isinstance(data, dict) or not data or set(data) - allowed:
+        raise ValueError('Solo podés editar tus datos de perfil')
+    clean = {}
+    for key, value in data.items():
+        limit = {'name':120, 'email':254, 'phone':40, 'title':100, 'avatarColor':7}[key]
+        if not isinstance(value, str) or len(value.strip()) > limit or any(ord(c)<32 for c in value):
+            raise ValueError('Revisá los datos del perfil')
+        value = value.strip()
+        if key == 'name' and not value: raise ValueError('Ingresá tu nombre')
+        if key == 'email' and value and not re.fullmatch(r'[^\s@]+@[^\s@]+\.[^\s@]+', value):
+            raise ValueError('Ingresá un correo válido')
+        if key == 'avatarColor' and not re.fullmatch(r'#[0-9a-fA-F]{6}', value):
+            raise ValueError('Elegí un color válido')
+        clean['avatar_color' if key == 'avatarColor' else key] = value
+    conn.execute('UPDATE users SET '+','.join(key+'=?' for key in clean)+' WHERE id=?', (*clean.values(), user_id))
+    return public_user(conn.execute('SELECT * FROM users WHERE id=?', (user_id,)).fetchone())
+
+def save_avatar(conn, user_id, body, mime):
+    if mime not in ('image/jpeg', 'image/png', 'image/webp') or not 12 <= len(body) <= 256*1024:
+        raise ValueError('Usá una foto JPG, PNG o WebP de hasta 256 KB')
+    valid = ((mime == 'image/jpeg' and body.startswith(b'\xff\xd8\xff') and body.endswith(b'\xff\xd9')) or
+             (mime == 'image/png' and body.startswith(b'\x89PNG\r\n\x1a\n')) or
+             (mime == 'image/webp' and body[:4] == b'RIFF' and body[8:12] == b'WEBP'))
+    if not valid: raise ValueError('El archivo no corresponde a una imagen compatible')
+    conn.execute('INSERT INTO user_avatars VALUES(?,?,?) ON CONFLICT(user_id) DO UPDATE SET mime=excluded.mime,body=excluded.body', (user_id, mime, body))
+    conn.execute('UPDATE users SET avatar_updated=? WHERE id=?', (secrets.token_hex(12), user_id))
 
 def has_users(conn):
     return bool(conn.execute('SELECT 1 FROM users LIMIT 1').fetchone())
@@ -64,7 +104,7 @@ def create_user(conn, data, role, created):
         raise ValueError('Ese nombre de usuario ya está registrado')
     digest, salt = password_values(data.get('password'))
     uid = str(uuid.uuid4())
-    conn.execute('INSERT INTO users VALUES(?,?,?,?,?,?,?,?)', (uid, login, name.strip(), role, digest, salt, 1, created))
+    conn.execute('INSERT INTO users(id,username,name,role,password_hash,salt,active,created) VALUES(?,?,?,?,?,?,?,?)', (uid, login, name.strip(), role, digest, salt, 1, created))
     return public_user(conn.execute('SELECT * FROM users WHERE id=?', (uid,)).fetchone())
 
 def token_from(headers):

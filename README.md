@@ -265,6 +265,23 @@ conserva registros, pero no los adjuntos ni las sesiones de recepción. El regis
 de auditoría en SQLite guarda escrituras y envíos. No reutiliza bases ni datos de
 Vitalis.
 
+## Personalizar una cuenta
+
+Administradores y asesores tienen **Mi cuenta** en el menú lateral. El avatar de
+la esquina superior abre la ventana de personalización: nombre, cargo, correo,
+teléfono, color de las iniciales y foto. La foto se recorta en el dispositivo y se
+guarda al elegirla; los demás datos se guardan con **Guardar perfil**. El correo
+es un dato de contacto y no cambia el usuario de acceso.
+
+Cada persona puede cambiar su propia contraseña indicando la actual. Se cierran
+sus otras sesiones y se renueva la sesión del navegador actual. Los permisos y el
+usuario no se pueden modificar desde el perfil. Las fotos se guardan en SQLite y
+solo se entregan al titular autenticado. La migración de cuentas existentes es
+automática y conserva contraseñas, sesiones y registros.
+
+Los créditos de la imagen de M87* están en **Acerca de Nexo**, disponible en el
+acceso y en el pie de la aplicación.
+
 ## Verificación
 
 ```sh
