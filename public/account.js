@@ -8,6 +8,10 @@ function accountAvatar(user=config.profile, extra=''){
 function paintAccount(user=config.profile){
   if(!user)return;
   config.profile=user;config.user=user.name;
+  if(user.workspaceKind==='independent'){
+    config.workspaceName=user.name;
+    const workspace=$('.workspace>div');if(workspace)workspace.innerHTML=esc(user.name)+'<small>Asesor independiente</small>';
+  }
   teamUsers=teamUsers.map(u=>u.id===user.id?user:u);
   $('#advisorName').innerHTML=esc(user.name)+`<small>${esc(user.title||(isAdmin()?'Administración':'Asesor inmobiliario'))}</small>`;
   const side=$('#profile > .avatar');if(side)side.outerHTML=accountAvatar(user);
@@ -16,7 +20,7 @@ function paintAccount(user=config.profile){
 }
 function renderAccountPage(){
   const u=config.profile||{};
-  $('#main').innerHTML=heading('TU PERFIL EN NEXO','Mi cuenta','Personalizá tu perfil y administrá tu acceso.')+`<div class="account-grid"><section class="card account-summary">${accountAvatar(u,'large')}<h2>${esc(config.user)}</h2><p>${esc(u.title||(isAdmin()?'Administración':'Asesor inmobiliario'))}</p><span class="account-badge">${isAdmin()?'Panel central':'Panel del asesor'}</span><div class="actions">${config.teamSupported?button('Personalizar mi cuenta','personalize-account','settings','primary'):''}</div></section><section class="card account-details"><h2>Datos de contacto</h2><div class="info-grid">${info('Usuario',u.username||'Cuenta de ChatGPT')}${info('Correo electrónico',u.email||'Sin agregar')}${info('Teléfono',u.phone||'Sin agregar')}</div><h2>Seguridad y acceso</h2><div class="actions">${config.teamSupported?button('Cambiar contraseña','change-own-password','shield')+button('Cerrar sesión','logout','arrow'):''}${!isAdmin()?button('Activar avisos','notifications','bell'):''}</div></section></div>`;
+  $('#main').innerHTML=heading('TU PERFIL EN NEXO','Mi cuenta','Personalizá tu perfil y administrá tu acceso.')+`<div class="account-grid"><section class="card account-summary">${accountAvatar(u,'large')}<h2>${esc(config.user)}</h2><p>${esc(u.title||(isAdmin()?'Administración':'Asesor inmobiliario'))}</p><span class="account-badge">${isAdmin()?'Panel central':'Panel del asesor'}</span><div class="actions">${config.teamSupported?button('Personalizar mi cuenta','personalize-account','settings','primary'):''}</div></section><section class="card account-details"><h2>Datos de contacto</h2><div class="info-grid">${info('Usuario',u.username||'Cuenta de ChatGPT')}${info('Correo electrónico',u.email||'Sin agregar')}${info('Teléfono',u.phone||'Sin agregar')}</div><h2>Seguridad y acceso</h2><div class="actions">${config.teamSupported?button('Cambiar contraseña','change-own-password','shield')+button('Cerrar sesión','logout','arrow'):''}${!isAdmin()?button('Activar avisos','notifications','bell'):''}${u.workspaceKind==='independent'?button('Exportar mis datos','export-data','download'):''}</div></section></div>`;
 }
 function openAccountSettings(){
   if(!config.profile||!config.teamSupported)return;

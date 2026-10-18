@@ -2,7 +2,7 @@
 
 ClouDNS administra el nombre; el programa necesita un servidor Linux con Docker Engine y Docker Compose. Esta carpeta despliega la versión Python completa, con cuentas de gerencia y asesores. No usa el adaptador antiguo de `worker/`.
 
-**Estado:** paquete preparado; falta ejecutar en el servidor, configurar DNS y comprobar HTTPS y audio real. Esta configuración es para un piloto. No se validó capacidad para 1.800 asesores simultáneos. Como punto de partida para el piloto: VPS de 2 vCPU, 4 GB de RAM y disco SSD de 40 GB, ampliable según visitas, tamaño de audio y uso concurrente. El hosting, dominio e IA tienen costos independientes.
+Esta configuración es para un piloto. No se validó capacidad para 1.800 asesores simultáneos. Como punto de partida para el piloto: VPS de 2 vCPU, 4 GB de RAM y disco SSD de 40 GB, ampliable según visitas, tamaño de audio y uso concurrente. El hosting, dominio e IA tienen costos independientes. El portal público y el registro de espacios independientes se describen en [PORTAL-PUBLICO.md](../PORTAL-PUBLICO.md).
 
 ## 1. Preparar el servidor
 
@@ -41,7 +41,7 @@ docker compose ps
 docker compose logs --tail 80 caddy
 ```
 
-Caddy emite el certificado automáticamente cuando DNS y puertos están listos. Abrir **https://app.chatgo.ia.bo** e iniciar sesión con el administrador creado. El acceso requiere cuentas de Nexo; los registros no son públicos. Caddy redirige HTTP a HTTPS y permite el micrófono en este dominio. Las sesiones usan cookies Secure y HttpOnly. El backend solo es accesible dentro de la red Docker. No publicar su puerto con `-p` ni agregar `ports` al servicio `app`.
+Caddy emite el certificado automáticamente cuando DNS y puertos están listos. Abrir **https://app.chatgo.ia.bo** e iniciar sesión con el administrador creado. El panel privado requiere cuentas de Nexo. En **/explorar**, el público ve únicamente los inmuebles publicados; **/registro** crea espacios independientes. Caddy redirige HTTP a HTTPS y permite micrófono y ubicación del dispositivo en este dominio. Las sesiones usan cookies Secure y HttpOnly. El backend solo es accesible dentro de la red Docker. No publicar su puerto con `-p` ni agregar `ports` al servicio `app`.
 
 En el panel central, crear asesores, cargar y asignar clientes e inmuebles. En configuración, ingresar una clave de OpenAI propia. La clave queda en el volumen privado y no se devuelve al navegador. La prueba de clave verifica acceso de texto; además realizar una grabación real para verificar transcripción. No pegar claves en chats ni incluirlas en ZIP públicos.
 
@@ -75,3 +75,7 @@ docker compose up -d
 Restaurar preferentemente en un volumen vacío; extraer encima conserva archivos adicionales que no existían en el respaldo. Asegurar también la copia de `.env`, sin compartirla públicamente. **No ejecutar `docker compose down -v`: elimina datos y certificados.** Para actualizar código, hacer respaldo primero y luego `docker compose build app` y `docker compose up -d`.
 
 La aplicación usa SQLite y un servidor Python sencillo, con dos trabajos de transcripción a la vez. Antes de incorporar toda la red de asesores, medir carga y migrar según resultados a un servidor de aplicación y base de datos apropiados, cola de trabajos y almacenamiento de audios ampliable. No hay facturación automática ni infraestructura de alta disponibilidad en este paquete.
+
+Para actualizar el portal y los espacios independientes, seguí la sección
+**Mapas y despliegue** de [PORTAL-PUBLICO.md](../PORTAL-PUBLICO.md). Conservá el
+respaldo previo y recargá Caddy después de actualizar su configuración.

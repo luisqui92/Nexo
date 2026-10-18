@@ -16,6 +16,7 @@ def available(conn, property_id=None):
     app=functions()
     if property_id:
         p=app.record(conn,property_id,'properties')
+        if p.get('workspaceId','legacy')!='legacy': raise ValueError('Inmueble no encontrado')
         if p.get('status')!='Disponible':return []
     events=app.list_records(conn,'events')
     current=local_now()
@@ -54,7 +55,9 @@ def book(conn,property_id,date,name,phone):
     return event
 
 def cancel(conn,event_id,phone):
-    app=functions();event=app.record(conn,event_id,'events');c=app.record(conn,event.get('clientId'),'clients')
+    app=functions();event=app.record(conn,event_id,'events')
+    if event.get('workspaceId','legacy')!='legacy': raise ValueError('Visita no encontrada')
+    c=app.record(conn,event.get('clientId'),'clients')
     if re.sub(r'\D','',c.get('phone',''))!=re.sub(r'\D','',phone):raise ValueError('La visita no corresponde a este contacto.')
     if event.get('status')!='Pendiente':raise ValueError('La visita ya no está pendiente.')
     event['status']='Cancelada';app.put(conn,'events',event)

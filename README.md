@@ -3,6 +3,11 @@
 Primera versión funcional del sistema inmobiliario basado en la idea de Vitalis:
 conversación → hoja revisable → expediente → siguiente acción.
 
+Incluye un [portal público con mapa y registro de asesores independientes e
+inmobiliarias](PORTAL-PUBLICO.md), con espacios privados separados y publicaciones
+seleccionadas. Abrí `/explorar` para buscar inmuebles y `/registro` para crear un
+espacio. El acceso privado existente se conserva en `/`.
+
 ## Preparar la presentación
 
 Abrir **`presentar.py`** en Pydroid o ejecutar `python presentar.py` en una
@@ -81,7 +86,7 @@ Crédito y ficha original: https://www.eso.org/public/images/eso1907a/.
    Desde Equipo se puede cambiar una contraseña o desactivar un asesor. Ambas
    acciones invalidan sus sesiones; desactivar conserva su historial.
 
-El asesor no administra usuarios, conexiones, exportaciones globales ni la
+El asesor de una inmobiliaria no administra usuarios, conexiones, exportaciones globales ni la
 cartera de inmuebles. Los permisos se verifican en cada ruta del servidor,
 incluidos audios, documentos, transcripciones, coincidencias y consultas del
 historial. Una propiedad compartida no permite ver clientes o visitas de otros
@@ -256,8 +261,9 @@ Por defecto escucha solo en localhost. Para acceso desde otra máquina, configur
 La contraseña adicional habilita HTTP Basic del navegador. Cada integrante
 también usa su cuenta de Nexo. Crear el primer administrador desde localhost
 antes de compartir el servidor. Detrás de un proxy HTTPS, definir `NEXO_HTTPS=1`
-para marcar la cookie como Secure. Es un espacio de una inmobiliaria con roles
-de administrador y asesor; no admite múltiples inmobiliarias independientes.
+para marcar la cookie como Secure. Cada inmobiliaria o asesor independiente
+tiene un espacio propio. Los datos existentes quedan en el espacio principal;
+ningún inmueble aparece públicamente hasta que su responsable lo publica.
 
 Respaldar **toda la carpeta `data/`** con la aplicación detenida o mediante un
 snapshot consistente; incluye base de datos y archivos. La exportación JSON
@@ -291,6 +297,7 @@ node --check public/team.js
 node tests/team-ui.test.mjs
 node tests/audio-flow.test.mjs
 node tests/presentation-ui.test.mjs
+node tests/marketplace-ui.test.mjs
 ```
 
 Los tests ejercitan rutas reales del handler sin abrir sockets: acceso,
@@ -303,3 +310,7 @@ externas requieren sus credenciales y una prueba real para considerarse activas.
 ## Publicación en dominio propio
 
 Para alojar la versión completa con gerencia y asesores en `app.chatgo.ia.bo`, usar las instrucciones de [deploy/LEEME.md](deploy/LEEME.md). Incluye Docker, proxy HTTPS, creación privada del administrador y almacenamiento persistente. ClouDNS requiere la IP pública del servidor; el paquete por sí solo no configura el dominio ni contrata hosting.
+
+La actualización del portal y los espacios independientes se explica en
+[PORTAL-PUBLICO.md](PORTAL-PUBLICO.md). Requiere actualizar la imagen de la app
+y recargar Caddy para habilitar la ubicación del dispositivo en el mapa.

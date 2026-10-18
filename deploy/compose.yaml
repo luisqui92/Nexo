@@ -17,6 +17,8 @@ services:
       OPENAI_MODEL: gpt-4.1-mini
       NEXO_TRANSCRIPTION_PROVIDER: openai
       OPENAI_TRANSCRIBE_MODEL: gpt-4o-mini-transcribe
+      NEXO_MAP_TILE_URL: ${NEXO_MAP_TILE_URL:-}
+      NEXO_MAP_PROVIDER: ${NEXO_MAP_PROVIDER:-OpenStreetMap}
     # No public backend port: only Caddy can reach the service through this network.
     volumes:
       - nexo_data:/app/data

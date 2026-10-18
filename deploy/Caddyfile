@@ -11,8 +11,8 @@
         Strict-Transport-Security "max-age=31536000"
         X-Frame-Options DENY
         X-Content-Type-Options nosniff
-        Referrer-Policy same-origin
-        Permissions-Policy "microphone=(self), camera=(), geolocation=()"
+        Referrer-Policy strict-origin-when-cross-origin
+        Permissions-Policy "microphone=(self), camera=(), geolocation=(self)"
         -Server
     }
     reverse_proxy app:8080 {
