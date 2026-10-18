@@ -4,3 +4,4 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 
 .portal-mark{display:block;flex:none;width:42px;height:42px;border-radius:11px;background:#100e12 url("https://cdn.eso.org/images/screen/eso1907a.jpg") center/270% no-repeat;border:1px solid #d8865640}@media(max-width:720px){.portal-mark{width:36px;height:36px}}
+@media(max-width:720px){#publicMap{min-height:0;height:100%}}
