@@ -1,0 +1,91 @@
+/* The home page is a working journal: paper, appointments and conversations. */
+.workdesk-screen:not(.auth-screen){background:#eeeae1}
+.workdesk-screen .sidebar{background:#f8f5ed;border-color:#dbd6c9}
+.workdesk-screen .topbar{background:#eeeae1;border-color:#d9d3c7}
+.workdesk-screen .nav-item.active{background:#292c28;color:#faf5e9}
+.workdesk-screen .nav-item{font-size:13px}
+.workdesk-screen main{padding-top:24px}
+.workdesk{--desk-ink:#292c28;--desk-muted:#6c6c61;--desk-line:#d5d0c4;--desk-paper:#fffcf4;color:var(--desk-ink)}
+.workdesk button:focus-visible,.workdesk a:focus-visible{outline:3px solid #ac5839;outline-offset:4px}
+.desk-masthead{display:flex;justify-content:space-between;gap:15px;align-items:center;border-bottom:1px solid var(--desk-ink);padding:0 0 14px;font-size:10px;letter-spacing:1.6px;font-weight:650}
+.desk-masthead time{text-transform:capitalize;font-weight:450;letter-spacing:.2px;font-size:12px;color:var(--desk-muted)}
+.desk-intro{display:flex;justify-content:space-between;align-items:center;gap:26px;padding:30px 0 32px}
+.desk-intro h1{font-family:Georgia,'Times New Roman',serif;font-size:clamp(45px,5.8vw,78px);font-weight:400;letter-spacing:-3px;line-height:1;margin:0 0 14px}
+.desk-intro h1>span{color:#b76c49}
+.desk-intro p{font-size:14px;line-height:1.7;color:var(--desk-muted);margin:0;max-width:430px}
+.desk-intro .desk-record{border-radius:50px;background:var(--desk-ink);border-color:var(--desk-ink);color:#fff9ef;min-height:52px;padding:14px 21px;font-size:13px;box-shadow:none;flex-shrink:0}
+.desk-intro .desk-record:hover{background:#41463d}
+.desk-layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(275px,1fr);align-items:start;gap:30px}
+.desk-main,.desk-side{min-width:0}
+.desk-agenda{background:var(--desk-paper);border:1px solid var(--desk-line);box-shadow:4px 4px 0 #dfdacd;padding:25px 25px 0}
+.desk-section-head{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:20px}
+.desk-section-head h2,.desk-people h2,.desk-tools h2{font-size:20px;font-weight:550;letter-spacing:-.6px}
+.desk-section-head>a{font-size:12px;text-decoration:underline;text-underline-offset:4px;white-space:nowrap;color:var(--desk-muted)}
+.desk-kicker{display:block;font-size:9px;letter-spacing:1.4px;color:var(--desk-muted);margin-bottom:8px}
+.desk-add{width:42px;height:42px;background:none;border:1px solid var(--desk-line);border-radius:50%;display:grid;place-items:center;flex:none}
+.desk-add:hover{background:#eee9dc}
+.desk-tabs{display:flex;gap:22px;border-bottom:1px solid var(--desk-line)}
+.desk-tabs button{padding:10px 0 13px;background:none;border:0;border-bottom:2px solid transparent;font-size:13px;color:var(--desk-muted);min-height:44px}
+.desk-tabs button[aria-pressed=true]{color:var(--desk-ink);border-bottom-color:var(--desk-ink);font-weight:650}
+.desk-agenda-list{min-height:275px}
+.desk-appointment{display:flex;gap:18px;padding:24px 0;border-bottom:1px solid #e6e1d6;align-items:center}
+.desk-appointment-time{width:62px;flex:none;align-self:flex-start;padding-top:2px}
+.desk-appointment-time>span{display:block;font-size:20px;letter-spacing:-.6px}
+.desk-appointment-time>small{display:block;font-size:11px;color:var(--desk-muted);margin-top:6px}
+.desk-appointment-body{flex:1;min-width:0;border-left:2px solid #b9c4ad;padding-left:16px}
+.desk-appointment.is-overdue .desk-appointment-body{border-color:#ae6347}
+.desk-category{display:block;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#68765d;margin-bottom:7px}
+.desk-appointment h3{font-size:16px;line-height:1.45;font-weight:600;overflow-wrap:anywhere}
+.desk-appointment p{font-size:12px;color:var(--desk-muted);line-height:1.7;margin:6px 0 0}
+.desk-appointment-body>small{display:block;color:#78766b;font-size:11px;margin-top:5px}
+.desk-appointment .btn{background:none;border:0;padding:8px 0;font-size:11px;color:#59644e;min-height:44px}
+.desk-agenda-link{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:18px 0;font-size:12px;color:#676e5b}
+.desk-empty{padding:32px 3px 34px;max-width:380px}
+.desk-empty-mark{display:block;color:#b59670;font-size:35px;font-family:Georgia,serif;margin-bottom:12px}
+.desk-empty h3{font-family:Georgia,'Times New Roman',serif;font-size:25px;font-weight:400;letter-spacing:-.4px;line-height:1.3}
+.desk-empty p{color:var(--desk-muted);font-size:13px;line-height:1.8;margin:10px 0 18px}
+.desk-empty .btn{background:transparent;border:1px solid #bcb6a8;border-radius:4px;font-size:12px;color:var(--desk-ink);min-height:44px;box-shadow:none}
+.desk-notebook{background:#34463a;color:#f9f3e4;padding:26px 24px 23px;position:relative}
+.desk-notebook:before{content:'';display:block;width:74px;height:19px;background:#bba67a99;transform:rotate(-5deg);position:absolute;top:-9px;left:calc(50% - 37px);pointer-events:none}
+.desk-note-top{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#d5ddc7;font-size:9px;letter-spacing:1.3px;margin-bottom:25px}
+.desk-note-top .icon{width:22px;height:22px}
+.desk-notebook h2{font-family:Georgia,'Times New Roman',serif;font-size:29px;line-height:1.2;letter-spacing:-.5px;font-weight:400}
+.desk-note-intro{color:#d7dfcf;font-size:12px;line-height:1.7;margin:15px 0 18px}
+.desk-draft{display:flex;gap:11px;align-items:center;border-top:1px solid #ffffff35;padding:17px 0}
+.desk-draft>div{flex:1;min-width:0}.desk-draft h3{font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+.desk-draft p{font-size:12px;line-height:1.6;color:#d7dfcf;margin:4px 0}
+.desk-draft small{font-size:10px;color:#d7dfcf}
+.desk-draft-icon .icon{width:21px;height:25px;color:#d3c49e}
+.desk-draft:hover h3{text-decoration:underline;text-underline-offset:3px}
+.desk-note-empty{font-size:13px;line-height:1.9;color:#d7dfcf;border-top:1px solid #ffffff35;padding-top:18px}
+.desk-note-link{display:block;padding-top:18px;font-size:12px;color:#f7e8c4;text-decoration:underline;text-underline-offset:4px}
+.desk-tools{padding:28px 0 12px}
+.desk-tools h2{font-size:15px;margin-bottom:15px}
+.desk-tools>.btn,.desk-tools>a{display:flex;width:100%;gap:12px;justify-content:flex-start;border:0;border-bottom:1px solid var(--desk-line);border-radius:0;box-shadow:none;background:none;font-size:12px;min-height:50px;padding:12px 0;white-space:normal;text-align:left;font-weight:500;line-height:1.6}
+.desk-tools .icon{width:17px;height:17px;color:#7b826f}.desk-tools>a>.icon:last-child{margin-left:auto}
+.desk-tools>.btn:hover,.desk-tools>a:hover{color:#aa583a}
+.desk-people{padding-top:34px}.desk-people .desk-section-head{margin-bottom:14px}.desk-people h2{font-size:19px}
+.desk-person{display:flex;gap:12px;align-items:center;padding:17px 0;border-bottom:1px solid var(--desk-line)}
+.desk-person>div{flex:1;min-width:0}.desk-person a,.desk-person h3{font-size:14px;font-weight:600;overflow-wrap:anywhere}
+.desk-person p{font-size:12px;color:var(--desk-muted);line-height:1.6;margin:5px 0 0}
+.desk-person-initial{background:#ded7c7;border-radius:50%;width:34px;height:34px;display:grid;place-items:center;flex:none;font-size:10px;color:#595c4f}
+.desk-person .btn{background:none;border:0;padding:8px 0;min-height:44px;font-size:11px;white-space:nowrap}
+.desk-team-line{display:flex;gap:8px 12px;flex-wrap:wrap;align-items:center;padding-top:19px;font-size:12px}.desk-team-line>span{color:var(--desk-muted);margin-right:4px}
+.desk-team-line button{background:transparent;border:1px solid #bbb6a9;border-radius:40px;padding:8px 13px;min-height:36px;font-size:12px}
+.desk-team-line>a{text-decoration:underline;text-underline-offset:4px}
+.desk-quiet{color:var(--desk-muted);font-size:13px;line-height:1.9;padding:10px 0 20px;border-bottom:1px solid var(--desk-line)}
+.desk-more{display:block;font-size:12px;text-decoration:underline;text-underline-offset:4px;padding:19px 0 4px}
+.desk-catalog{border-top:1px solid var(--desk-ink);margin-top:38px;padding-top:25px}
+.desk-property-strip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.desk-property{display:flex;gap:16px;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--desk-line);min-width:0}
+.desk-property-art{width:110px;height:95px;flex:none;background:#d7dfcf;overflow:hidden}
+.desk-property-art>img,.desk-property-art>svg{width:100%;height:100%;object-fit:cover;display:block}
+.desk-property>div:nth-child(2){flex:1;min-width:0}.desk-property>span{align-self:flex-start;padding-top:4px;font-size:20px;color:#82755d}
+.desk-property small{font-size:10px;color:var(--desk-muted);line-height:1.6}.desk-property h3{font-size:15px;line-height:1.5;margin:6px 0;overflow-wrap:anywhere}
+.desk-property p{font-size:12px;color:#656a5c;margin:0}.desk-property:hover h3{text-decoration:underline;text-underline-offset:4px}
+.workdesk .demo-banner{margin-bottom:27px;color:#775d39;font-size:11px}
+@media(min-width:1500px){.desk-layout{gap:45px;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr)}}
+@media(max-width:1120px){.desk-layout{grid-template-columns:minmax(0,1.3fr) minmax(250px,1fr);gap:22px}.desk-agenda{padding:22px 18px 0}.desk-notebook{padding:25px 20px}.desk-property-art{width:85px;height:85px}.desk-property{gap:12px}.desk-appointment{gap:12px}.desk-appointment-time{width:52px}}
+@media(max-width:900px){.desk-layout{grid-template-columns:1fr}.desk-side{display:grid;grid-template-columns:1fr 1fr;gap:24px}.desk-tools{padding-top:0}.desk-intro h1{font-size:61px}.desk-intro{align-items:flex-start}.desk-intro .desk-record{margin-top:5px}.desk-property-strip{gap:22px}}
+@media(max-width:600px){.workdesk-screen main{padding:20px 19px 26px}.desk-masthead{align-items:flex-start;flex-direction:column;gap:8px;font-size:9px;letter-spacing:1.3px}.desk-masthead time{font-size:12px}.desk-intro{display:block;padding:24px 0 28px}.desk-intro h1{font-size:58px}.desk-intro p{font-size:14px}.desk-intro .desk-record{margin-top:20px;min-height:48px;padding:12px 21px}.desk-side{display:block}.desk-notebook{margin-top:8px}.desk-tools{padding-top:28px}.desk-section-head h2,.desk-people h2{font-size:20px}.desk-section-head>a{font-size:11px}.desk-appointment{position:relative;gap:10px;padding:22px 0}.desk-appointment-time{width:51px}.desk-appointment-time>span{font-size:18px}.desk-appointment-body{padding-left:12px}.desk-appointment h3{font-size:15px}.desk-appointment>.btn{font-size:0;width:30px;min-width:30px;flex:none}.desk-appointment>.btn .icon{width:17px}.desk-property-strip{grid-template-columns:1fr;gap:18px}.desk-property-art{width:100px;height:88px}.desk-catalog{margin-top:24px}.desk-tabs{gap:24px}.desk-notebook h2{font-size:31px}.desk-team-line button{min-height:44px}.desk-person .btn{font-size:11px}}
+@media print{.workdesk-screen{background:white}.desk-notebook{background:#edf1e9;color:#292c28}.desk-notebook p,.desk-notebook small,.desk-notebook a{color:#292c28}.desk-notebook:before,.desk-tools,.desk-record,.desk-add{display:none!important}.desk-agenda{box-shadow:none}}
