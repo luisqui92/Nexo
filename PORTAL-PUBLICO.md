@@ -30,6 +30,24 @@ contactos o reservas. Se pueden filtrar, explorar y compartir por enlace.
 **Ver inmuebles reales** vuelve al catálogo de publicaciones auténticas; los
 ejemplos no se mezclan con esa búsqueda ni cambian las carteras privadas.
 
+## Ambientes ficticios y vista 360°
+
+Las seis fichas de ejemplo incluyen una galería: fachada ilustrada, dormitorio
+ficticio y cocina ficticia. Comparten los mismos dos interiores generados con IA
+y una panorámica de sala, con aviso visible; no representan ofertas reales.
+
+**Abrir vista 360°** carga una imagen equirectangular 2:1 de la sala en un visor
+esférico local con WebGL. Permite mirar alrededor con el dedo, mouse o flechas,
+acercar, alejar y restablecer. Se carga únicamente al tocar el botón, sin claves
+ni librerías externas. Si el dispositivo no soporta el visor o falla la imagen,
+se mantienen la galería y un enlace a la panorámica. El visor libera sus recursos
+al cerrar o cambiar de ficha.
+
+Es una demostración de un ambiente. No es un recorrido completo ni permite
+caminar por las habitaciones. Los archivos WebP están en
+`public/examples/interiores/`, suman menos de 700 KB y se sirven desde Nexo.
+No se añadieron campos de 360° ni carga de panorámicas a los inmuebles reales.
+
 ## Qué hace cada cuenta
 
 Un asesor independiente tiene su espacio propio: administra sus inmuebles,

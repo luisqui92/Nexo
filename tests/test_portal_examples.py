@@ -53,6 +53,23 @@ class PublicExampleHouses(unittest.TestCase):
             self.assertIn('SIN OFERTA REAL',image['data'].decode())
         self.assertEqual(request('GET','/api/public/examples/not-a-house',cookie='')['status'],404)
 
+    def test_interior_gallery_and_spherical_panorama_are_public_demo_media(self):
+        for house in portal_examples.listings():
+            detail=request('GET','/api/public/examples/'+house['id'],cookie='')['data']
+            self.assertEqual(len(detail['photos']),3)
+            self.assertEqual(len(detail['photoLabels']),3)
+            self.assertIn('IA',detail['mediaNotice'])
+            self.assertEqual(detail['panorama']['projection'],'equirectangular')
+            for url in detail['photos'][1:]+[detail['panorama']['url']]:
+                result=request('GET',url,cookie='')
+                self.assertEqual(result['status'],200,result)
+                self.assertIn('image/webp',result['mime'])
+                self.assertTrue(result['data'].startswith(b'RIFF'))
+                self.assertEqual(result['data'][8:12],b'WEBP')
+                self.assertLess(len(result['data']),350000)
+        for path in ('/panorama.js','/portal.js'):
+            self.assertEqual(request('GET',path,cookie='')['status'],200)
+
     def test_examples_cannot_receive_contacts_reports_or_be_saved_as_a_real_property(self):
         before=self.snapshot();pid='ejemplo-casa-cala-cala'
         for action in ('inquiries','report'):

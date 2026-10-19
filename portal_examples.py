@@ -18,7 +18,10 @@ def listings():
             'bedrooms':bedrooms,'bathrooms':bathrooms,'parking':parking,'features':list(features),
             'description':'Casa ficticia para mostrar cómo funciona el mapa de Nexo. El precio, las características y el punto del mapa son ilustrativos. No corresponde a una oferta real.',
             'latitude':lat,'longitude':lon,'locationPrecision':'illustrative',
-            'photos':['/examples/casa-'+slug+'.svg'],
+            'photos':['/examples/casa-'+slug+'.svg','/examples/interiores/dormitorio.webp','/examples/interiores/cocina.webp'],
+            'photoLabels':['Fachada ilustrativa','Dormitorio ficticio','Cocina ficticia'],
+            'panorama':{'url':'/examples/interiores/sala-360.webp','label':'Sala ficticia · Vista 360°','projection':'equirectangular'},
+            'mediaNotice':'Ambientes generados con IA, compartidos entre las seis casas de ejemplo. No representan un inmueble real ni un recorrido completo de la casa.',
             'publisher':{'id':'nexo-ejemplos','name':'Nexo · Demostración','company':'Casa de ejemplo'}})
     return houses
 

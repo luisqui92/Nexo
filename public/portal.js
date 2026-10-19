@@ -3,7 +3,8 @@ const portalEsc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<'
 const portalMoney=(price,currency)=>`${currency==='BOB'?'Bs':'USD'} ${new Intl.NumberFormat('es-BO',{maximumFractionDigits:0}).format(Number(price)||0)}`;
 const portalEl=id=>document.getElementById(id);
 let portalMap,portalMarkers,portalConfig,portalListings=[],portalPage=1,portalBounds=null,portalRequestVersion=0,portalSelected=null,portalDialogReturnFocus=null,portalDetailVersion=0;
-let portalDebounce;
+let portalDebounce,portalPanorama=null;
+function portalDisposePanorama(){portalPanorama?.destroy();portalPanorama=null}
 const portalExampleMode=new URLSearchParams(location.search||'').get('ejemplos')==='1'||location.pathname.startsWith('/inmueble/ejemplo-casa-');
 async function portalApi(path,options={}){
   let response;try{response=await fetch(path,{...options,headers:{...(options.body?{'Content-Type':'application/json'}:{}),...options.headers}})}catch{throw Error('No pudimos conectar con Nexo. Revisá tu conexión y volvé a intentar.')}
@@ -46,9 +47,10 @@ async function portalSearch(fit=false){
   }catch(error){if(version!==portalRequestVersion)return;status.innerHTML=`<span class="portal-error">${portalEsc(error.message)}</span> <button type="button" class="portal-reset" data-retry>Reintentar</button>`}
 }
 function portalCloseDialog(){
-  ++portalDetailVersion;portalEl('portalDialogRoot').innerHTML='';document.body.style.overflow='';portalDialogReturnFocus?.focus();
+  ++portalDetailVersion;portalDisposePanorama();portalEl('portalDialogRoot').innerHTML='';document.body.style.overflow='';portalDialogReturnFocus?.focus();
 }
 function portalDialog(title,body){
+  portalDisposePanorama();
   portalDialogReturnFocus=document.activeElement;
   portalEl('portalDialogRoot').innerHTML=`<div class="portal-dialog-backdrop"><section class="portal-dialog" role="dialog" aria-modal="true" aria-label="${portalEsc(title)}"><header class="portal-dialog-header"><h2>${portalEsc(title)}</h2><button type="button" class="portal-close" data-close-dialog aria-label="Cerrar">×</button></header>${body}</section></div>`;
   document.body.style.overflow='hidden';portalEl('portalDialogRoot').querySelector('[data-close-dialog]')?.focus();
@@ -67,7 +69,14 @@ async function portalOpenListing(id){
   }catch(error){if(version!==portalDetailVersion)return;portalDialog('Publicación no disponible',`<div class="portal-empty"><p>${portalEsc(error.message)}</p><a class="portal-button outline" href="/explorar">Volver a explorar</a></div>`)}
 }
 function portalExampleDialog(p){
-  portalDialog('Casa de ejemplo · '+p.zone,`<div class="portal-detail"><div><img class="detail-photo" src="${portalEsc(p.photos[0])}" alt="Ilustración de ${portalEsc(p.title)}"><p class="detail-location">Punto ilustrativo · ${portalEsc(p.zone)}, ${portalEsc(p.city)}. No identifica una casa real.</p></div><div><span class="example-badge">EJEMPLO · NO ES UNA OFERTA REAL</span><p class="portal-eyebrow">${portalEsc(p.operation)} · Casa</p><div class="listing-price">${portalMoney(p.price,p.currency)}${p.operation==='Alquiler'?'<small> / mes</small>':''}</div><h1>${portalEsc(p.title)}</h1><div class="detail-facts"><span>${Number(p.bedrooms)} dormitorios</span><span>${Number(p.bathrooms)} baños</span><span>${Number(p.area)} m²</span><span>${Number(p.parking)} estacionamientos</span></div><p class="detail-description">${portalEsc(p.description)}</p><p class="detail-description">${p.features.map(portalEsc).join(' · ')}</p><div class="example-detail-note">Este ejemplo permite probar los filtros y recorrer el mapa. No recibe consultas ni solicitudes de visita.</div><div class="publisher-actions"><button type="button" class="portal-button" data-close-dialog>Seguir explorando</button><a class="portal-button outline" href="/explorar">Ver inmuebles reales</a></div><a class="example-share-link" href="/inmueble/${encodeURIComponent(p.id)}?ejemplos=1" target="_blank" rel="noopener">Enlace a esta casa de ejemplo ↗</a></div></div>`);
+  const labels=p.photoLabels||p.photos.map((_,i)=>'Imagen de ejemplo '+(i+1));
+  const gallery=`<div class="example-media"><img id="detailMainPhoto" class="detail-photo" src="${portalEsc(p.photos[0])}" alt="${portalEsc(labels[0])}"><p id="examplePhotoCaption" class="example-photo-caption">${portalEsc(labels[0])}</p><div class="photo-thumbnails example-thumbnails" aria-label="Ambientes de ejemplo">${p.photos.map((url,i)=>`<button type="button" data-photo="${portalEsc(url)}" data-photo-label="${portalEsc(labels[i])}" aria-label="Ver ${portalEsc(labels[i])}" aria-pressed="${i===0}"><img src="${portalEsc(url)}" alt="" loading="lazy"><span>${portalEsc(labels[i])}</span></button>`).join('')}</div>${p.panorama?`<section class="example-tour" aria-label="Vista 360 de demostración"><div class="example-tour-heading"><div><h3>Sala en 360°</h3><p>Explorá un ambiente ficticio desde adentro.</p></div><span aria-hidden="true">360°</span></div><div id="examplePanorama" class="panorama-shell"><button type="button" class="panorama-start" data-start-panorama><strong>Abrir vista 360°</strong><span>Arrastrá con el dedo o el mouse para mirar alrededor.</span></button></div></section>`:''}<p class="example-media-notice">${portalEsc(p.mediaNotice||'Imágenes ficticias de demostración.')}</p><p class="detail-location">Punto ilustrativo · ${portalEsc(p.zone)}, ${portalEsc(p.city)}. No identifica una casa real.</p></div>`;
+  portalDialog('Casa de ejemplo · '+p.zone,`<div class="portal-detail">${gallery}<div><span class="example-badge">EJEMPLO · NO ES UNA OFERTA REAL</span><p class="portal-eyebrow">${portalEsc(p.operation)} · Casa</p><div class="listing-price">${portalMoney(p.price,p.currency)}${p.operation==='Alquiler'?'<small> / mes</small>':''}</div><h1>${portalEsc(p.title)}</h1><div class="detail-facts"><span>${Number(p.bedrooms)} dormitorios</span><span>${Number(p.bathrooms)} baños</span><span>${Number(p.area)} m²</span><span>${Number(p.parking)} estacionamientos</span></div><p class="detail-description">${portalEsc(p.description)}</p><p class="detail-description">${p.features.map(portalEsc).join(' · ')}</p><div class="example-detail-note">Este ejemplo permite probar los filtros, ver ambientes ficticios y explorar la sala en 360°. No recibe consultas ni solicitudes de visita.</div><div class="publisher-actions"><button type="button" class="portal-button" data-close-dialog>Seguir explorando</button><a class="portal-button outline" href="/explorar">Ver inmuebles reales</a></div><a class="example-share-link" href="/inmueble/${encodeURIComponent(p.id)}?ejemplos=1" target="_blank" rel="noopener">Enlace a esta casa de ejemplo ↗</a></div></div>`);
+  const start=portalEl('portalDialogRoot').querySelector('[data-start-panorama]');
+  if(start)start.onclick=()=>{
+    if(!window.NexoPanorama){start.innerHTML='<strong>No se pudo cargar el visor. Recargá la página para volver a intentar.</strong>';return}
+    portalDisposePanorama();portalPanorama=window.NexoPanorama.create(portalEl('examplePanorama'),{url:p.panorama.url,label:p.panorama.label});
+  };
   if(portalMap)portalMap.panTo([p.latitude,p.longitude]);
 }
 function portalVisitForm(p){
@@ -94,7 +103,7 @@ for(const mode of ['map','list'])portalEl(mode+'View').onclick=()=>{portalEl('po
 document.addEventListener('click',event=>{
   const card=event.target.closest('[data-listing]');if(card)portalOpenListing(card.dataset.listing);
   if(event.target.closest('[data-close-dialog]')||event.target.classList.contains('portal-dialog-backdrop'))portalCloseDialog();
-  const photo=event.target.closest('[data-photo]');if(photo&&portalEl('detailMainPhoto'))portalEl('detailMainPhoto').src=photo.dataset.photo;
+  const photo=event.target.closest('[data-photo]');if(photo&&portalEl('detailMainPhoto')){const image=portalEl('detailMainPhoto');image.src=photo.dataset.photo;if(photo.dataset.photoLabel){image.alt=photo.dataset.photoLabel;portalEl('examplePhotoCaption').textContent=photo.dataset.photoLabel;for(const button of portalEl('portalDialogRoot').querySelectorAll('[data-photo]'))button.setAttribute('aria-pressed',String(button===photo))}};
   const page=event.target.closest('[data-page]');if(page){portalPage+=page.dataset.page==='next'?1:-1;portalSearch(true)}
   if(event.target.closest('[data-retry]'))portalSearch(true);
 });
