@@ -32,4 +32,15 @@ pending[0](response({listings:[{...sample,title:'Respuesta vieja'}],total:1,page
 assert.match(pubNode('listingResults').innerHTML,/Búsqueda nueva/);assert.doesNotMatch(pubNode('listingResults').innerHTML,/Respuesta vieja/);
 publicContext.fetch=async()=>{throw new TypeError('offline')};await pubRun('portalSearch()');assert.match(pubNode('portalStatus').innerHTML,/Reintentar/);assert.match(pubNode('listingResults').innerHTML,/Búsqueda nueva/);
 publicContext.fetch=async()=>response(sample);await pubRun("portalOpenListing('public-1')");assert.doesNotMatch(pubNode('portalDialogRoot').innerHTML,/<script>/);assert.match(pubNode('portalDialogRoot').innerHTML,/Solicitar visita/);assert.match(pubNode('portalDialogRoot').innerHTML,/wa.me\/59170000000/);
+const example={...sample,id:'ejemplo-casa-cala-cala',isExample:true,features:['Jardín'],publisher:{id:'nexo-ejemplos',name:'Nexo · Demostración',company:'Casa de ejemplo'}};
+publicContext.fetch=async()=>response(example);await pubRun("portalOpenListing('ejemplo-casa-cala-cala')");
+assert.match(pubNode('portalDialogRoot').innerHTML,/NO ES UNA OFERTA REAL/);assert.doesNotMatch(pubNode('portalDialogRoot').innerHTML,/wa.me|data-request-visit|publicInquiryForm/);
+publicContext.example=example;const beforeInquiry=pubNode('portalContactArea').innerHTML;pubRun('portalVisitForm(example)');assert.equal(pubNode('portalContactArea').innerHTML,beforeInquiry);
+assert.match(pubRun('portalCard(example)'),/EJEMPLO · DATOS FICTICIOS/);
+const exampleCalls=[];
+const exampleContext={...publicContext,location:{pathname:'/explorar',search:'?ejemplos=1',origin:'https://nexo.test'},fetch:async path=>{exampleCalls.push(path);return response(path==='/api/public/config'?{center:[-17.39,-66.16],zoom:13,tileUrl:'https://tile.example/{z}/{x}/{y}.png'}:path==='/api/auth/me'?{user:null}:{listings:[example],total:1,page:1,limit:48,exampleMode:true})}};
+vm.createContext(exampleContext);vm.runInContext(readFileSync(new URL('../public/portal.js',import.meta.url),'utf8'),exampleContext);
+await new Promise(resolve=>setImmediate(resolve));
+assert.ok(exampleCalls.some(path=>path.startsWith('/api/public/examples?')));assert.ok(!exampleCalls.some(path=>path.startsWith('/api/public/listings?')));
+assert.equal(pubNode('exampleBanner').hidden,false);assert.match(pubNode('portalStatus').textContent,/casas de ejemplo/);
 console.log('Marketplace UI passed: independent permissions, agency/platform separation, anonymous browsing, escaped content, stale searches, map fallback and connection recovery.');

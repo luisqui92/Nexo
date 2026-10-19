@@ -10,6 +10,7 @@ import uuid
 from datetime import datetime
 from urllib.parse import urlsplit
 import accounts
+import portal_examples
 
 def initialize(conn):
     conn.executescript('''
@@ -116,7 +117,7 @@ def public_listing(row):
     output['publisher']={'id':row['publisher_id'],'name':row['publisher_name'],'title':row['publisher_title'],'company':row['company'],'phone':data['contactPhone']}
     return output
 
-def public_search(conn, query):
+def search_parameters(query):
     get=lambda key:query.get(key,[''])[0]
     search=text(get('q'),'la búsqueda',120).casefold()
     currency=get('currency')
@@ -132,6 +133,26 @@ def public_search(conn, query):
     if any(get(k) for k in ('south','north','west','east')):
         bounds=[number(get(k),'el área del mapa',-90 if k in ('south','north') else -180,90 if k in ('south','north') else 180) for k in ('south','north','west','east')]
         if bounds[0]>bounds[1] or bounds[2]>bounds[3]: raise ValueError('Área del mapa inválida')
+    return search,currency,low,high,rooms,page,limit,bounds
+
+def example_search(query):
+    search,currency,low,high,rooms,page,limit,bounds=search_parameters(query)
+    get=lambda key:query.get(key,[''])[0]
+    matches=[]
+    for house in portal_examples.listings():
+        if search and search not in ' '.join(house[k] for k in ('title','zone','city')).casefold():continue
+        if any(get(k) and get(k).casefold()!=house[k].casefold() for k in ('city','operation','type')):continue
+        if currency and house['currency']!=currency:continue
+        if get('publisher') and get('publisher')!=house['publisher']['id']:continue
+        if not low<=house['price']<=high or house['bedrooms']<rooms:continue
+        if bounds and not(bounds[0]<=house['latitude']<=bounds[1] and bounds[2]<=house['longitude']<=bounds[3]):continue
+        matches.append(house)
+    start=(page-1)*limit
+    return {'listings':matches[start:start+limit],'total':len(matches),'page':page,'limit':limit,'exampleMode':True}
+
+def public_search(conn, query):
+    search,currency,low,high,rooms,page,limit,bounds=search_parameters(query)
+    get=lambda key:query.get(key,[''])[0]
     conditions=[];values=[]
     if search:
         conditions.append("instr(json_extract(p.body,'$.searchText'),?)>0");values.append(search)
@@ -193,6 +214,13 @@ def route(h, conn, method, path, query):
     """Return True after replying; never bypass the main handler's host/origin checks."""
     def reply(status,data,mime='application/json; charset=utf-8'):
         h.reply(status,data,mime);return True
+    if path=='/api/public/examples' and method=='GET':return reply(200,example_search(query))
+    example_match=re.fullmatch(r'/api/public/examples/([\w-]+)(?:/(inquiries|report))?',path)
+    if example_match:
+        house=portal_examples.get(example_match[1])
+        if not house:return reply(404,{'error':'No encontramos esta casa de ejemplo'})
+        if method!='GET' or example_match[2]:return reply(405,{'error':'Es una casa ficticia de demostración; no admite consultas ni reservas.'})
+        return reply(200,house)
     if path=='/api/public/config' and method=='GET':
         url=os.environ.get('NEXO_MAP_TILE_URL') or 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
         if urlsplit(url).scheme!='https' or not all(v in url for v in ('{z}','{x}','{y}')): raise ValueError('La configuración del proveedor de mapas es inválida')

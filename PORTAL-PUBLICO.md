@@ -7,6 +7,7 @@ espacios independientes. No usarlo para desplegar esta versión.
 ## Rutas
 
 - `/explorar`: mapa y lista públicos, filtros, fichas y contacto por WhatsApp.
+- `/explorar?ejemplos=1`: el mismo mapa con seis casas ficticias para demostración.
 - `/registro`: alta de un asesor independiente o una inmobiliaria.
 - `/inmueble/<id>`: enlace público para compartir un inmueble publicado.
 - `/asesor/<id>`: publicaciones disponibles de un anunciante.
@@ -14,6 +15,20 @@ espacios independientes. No usarlo para desplegar esta versión.
 - `/#publicaciones`: selección de inmuebles, ubicación, fotos y contacto público.
 - `/#solicitudes`: consultas recibidas y estado del seguimiento.
 - `/#plataforma`: administración de Nexo, solo para el administrador principal.
+
+## Casas de ejemplo para el mapa
+
+El enlace **Ver casas de ejemplo** abre seis casas ilustrativas en Cala Cala,
+Queru Queru, Sarco, Tiquipaya, Tupuraya y Colcapirhua. Incluyen precios de venta
+y alquiler en USD y Bs, características y una ilustración original por casa.
+Cada ficha, imagen y marcador están identificados como ejemplo. Las posiciones
+son puntos ilustrativos de las zonas y no identifican propiedades reales.
+
+Este catálogo es de solo lectura: no crea registros, usuarios, publicaciones
+reales ni solicitudes. Las casas de ejemplo no tienen teléfono ni permiten
+contactos o reservas. Se pueden filtrar, explorar y compartir por enlace.
+**Ver inmuebles reales** vuelve al catálogo de publicaciones auténticas; los
+ejemplos no se mezclan con esa búsqueda ni cambian las carteras privadas.
 
 ## Qué hace cada cuenta
 
