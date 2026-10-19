@@ -150,3 +150,25 @@ de publicaciones, moderación, solicitudes, filtros y límites, y restricción d
 consumo de IA. La visualización de mapas y los permisos del navegador requieren
 verificación manual en el dominio desplegado; no se ejecutaron pruebas de carga
 para 1800 o 3000 usuarios.
+
+
+### Si OpenStreetMap muestra «Access blocked» o 403
+
+El proveedor necesita identificar el sitio mediante el encabezado `Referer`.
+Los tres mapas envían únicamente el origen de Nexo a servidores externos con
+`referrerPolicy: strict-origin-when-cross-origin`; no envían rutas ni consultas.
+Caddy y Python usan la misma política. No usar `same-origin` ni `no-referrer`
+para estas solicitudes de mapas.
+
+Una actualización del contenedor `app` no recarga la configuración de Caddy.
+Después de actualizar, ejecutar desde `deploy`:
+
+```bash
+sudo docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
+```
+
+Luego recargar el navegador con Ctrl+Shift+R. Si persiste el bloqueo, verificar
+el `Referer` de una solicitud de tesela en la pestaña Red del navegador. Si el
+proveedor sigue bloqueando con la identificación correcta, revisar el bloqueo
+con él o configurar otro proveedor contratado mediante `NEXO_MAP_TILE_URL`.
+No rotar subdominios para eludir el bloqueo.

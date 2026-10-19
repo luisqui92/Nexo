@@ -43,4 +43,24 @@ vm.createContext(exampleContext);vm.runInContext(readFileSync(new URL('../public
 await new Promise(resolve=>setImmediate(resolve));
 assert.ok(exampleCalls.some(path=>path.startsWith('/api/public/examples?')));assert.ok(!exampleCalls.some(path=>path.startsWith('/api/public/listings?')));
 assert.equal(pubNode('exampleBanner').hidden,false);assert.match(pubNode('portalStatus').textContent,/casas de ejemplo/);
+// Every map must identify this site's origin to the tile provider, including
+// when an older reverse proxy still supplies a stricter document policy.
+function mapHarness(){
+  const requests=[];
+  const map={setView(){return this},addLayer(){},on(){},invalidateSize(){},getContainer(){return node('#privatePropertyMap')}};
+  const layer={addTo(){return this},clearLayers(){}};
+  const L={map:()=>map,layerGroup:()=>layer,tileLayer:(url,options)=>{const request={url,options};requests.push(request);return {addTo(){return this},on(event,handler){request[event]=handler;return this}}}};
+  return {L,requests};
+}
+const publicMaps=mapHarness();publicContext.L=publicContext.window.L=publicMaps.L;
+pubRun('portalMapInit()');
+assert.equal(publicMaps.requests[0].options.referrerPolicy,'strict-origin-when-cross-origin');
+assert.match(publicMaps.requests[0].options.attribution,/OpenStreetMap/);
+publicMaps.requests[0].tileerror();assert.match(pubNode('mapNotice').textContent,/fichas siguen disponibles/);
+const privateMaps=mapHarness();context.L=context.window.L=privateMaps.L;
+context.fetch=async()=>response({center:[-17.39,-66.16],zoom:13,tileUrl:'https://tile.example/{z}/{x}/{y}.png',tileProvider:'OpenStreetMap'});
+await run('initPublicationEditor({})');
+await run('privateMapRequested=true;paintPrivatePropertyMap([])');
+assert.equal(privateMaps.requests.length,2);
+for(const request of privateMaps.requests)assert.equal(request.options.referrerPolicy,'strict-origin-when-cross-origin');
 console.log('Marketplace UI passed: independent permissions, agency/platform separation, anonymous browsing, escaped content, stale searches, map fallback and connection recovery.');

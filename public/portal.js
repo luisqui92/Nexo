@@ -16,7 +16,7 @@ function portalCard(p){
 function portalMapInit(){
   if(!window.L){portalEl('mapNotice').textContent='No se pudo cargar el mapa. Podés explorar las fichas en la vista Lista.';return}
   portalMap=L.map('publicMap',{scrollWheelZoom:false}).setView(portalConfig.center,portalConfig.zoom);
-  L.tileLayer(portalConfig.tileUrl,{maxZoom:19,attribution:`&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> · ${portalEsc(portalConfig.tileProvider)}`}).addTo(portalMap).on('tileerror',()=>{portalEl('mapNotice').textContent='No se pudo cargar parte del mapa. Las fichas siguen disponibles.'});
+  L.tileLayer(portalConfig.tileUrl,{maxZoom:19,referrerPolicy:'strict-origin-when-cross-origin',attribution:`&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> · ${portalEsc(portalConfig.tileProvider)}`}).addTo(portalMap).on('tileerror',()=>{portalEl('mapNotice').textContent='No se pudo cargar parte del mapa. Las fichas siguen disponibles.'});
   portalMarkers=typeof L.markerClusterGroup==='function'?L.markerClusterGroup({showCoverageOnHover:false,maxClusterRadius:50,iconCreateFunction:cluster=>L.divIcon({html:String(cluster.getChildCount()),className:'portal-cluster',iconSize:[40,40]})}):L.layerGroup();portalMap.addLayer(portalMarkers);
   portalMap.on('dragend',()=>{portalEl('searchMapArea').hidden=false});
 }

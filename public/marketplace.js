@@ -31,7 +31,7 @@ async function initPublicationEditor(p){
     const options=await mapConfiguration();if(!node.isConnected)return;
     const hasPoint=Number.isFinite(Number(p.latitude))&&Number.isFinite(Number(p.longitude))&&p.latitude!==undefined&&p.longitude!==undefined;
     publicationEditorMap=L.map(node).setView(hasPoint?[Number(p.latitude),Number(p.longitude)]:options.center,hasPoint?16:options.zoom);
-    L.tileLayer(options.tileUrl,{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · '+esc(options.tileProvider)}).addTo(publicationEditorMap);
+    L.tileLayer(options.tileUrl,{maxZoom:19,referrerPolicy:'strict-origin-when-cross-origin',attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · '+esc(options.tileProvider)}).addTo(publicationEditorMap);
     const setPoint=(lat,lng)=>{
       const form=$('#publicationForm');if(!form)return;
       form.elements.latitude.value=Number(lat).toFixed(6);form.elements.longitude.value=Number(lng).toFixed(6);
@@ -92,7 +92,7 @@ async function paintPrivatePropertyMap(properties){
   if(!window.L){node.innerHTML='<p class="body-copy">No se pudo cargar el mapa. Usá la vista Lista para consultar tus inmuebles.</p>';return}
   if(privatePropertyMap&&privatePropertyMap.getContainer()!==node){privatePropertyMap.remove();privatePropertyMap=null}
   try{
-    if(!privatePropertyMap){const options=await mapConfiguration();if(!node.isConnected||version!==privateMapVersion)return;privatePropertyMap=L.map(node).setView(options.center,options.zoom);L.tileLayer(options.tileUrl,{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · '+esc(options.tileProvider)}).addTo(privatePropertyMap);privatePropertyLayer=L.layerGroup().addTo(privatePropertyMap)}
+    if(!privatePropertyMap){const options=await mapConfiguration();if(!node.isConnected||version!==privateMapVersion)return;privatePropertyMap=L.map(node).setView(options.center,options.zoom);L.tileLayer(options.tileUrl,{maxZoom:19,referrerPolicy:'strict-origin-when-cross-origin',attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · '+esc(options.tileProvider)}).addTo(privatePropertyMap);privatePropertyLayer=L.layerGroup().addTo(privatePropertyMap)}
     privatePropertyLayer.clearLayers();const points=[];
     for(const p of properties){if(p.latitude===undefined||p.longitude===undefined||!Number.isFinite(Number(p.latitude))||!Number.isFinite(Number(p.longitude)))continue;const point=[Number(p.latitude),Number(p.longitude)];points.push(point);L.marker(point,{title:p.title,icon:L.divIcon({className:'private-price-marker',html:`<span>${money(p.price,p.currency)}</span>`,iconSize:[100,34]})}).on('click',()=>location.hash='#inmuebles/'+p.id).addTo(privatePropertyLayer)}
     privatePropertyMap.invalidateSize();if(points.length)privatePropertyMap.fitBounds(points,{padding:[45,45],maxZoom:15});
